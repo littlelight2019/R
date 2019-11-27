@@ -82,3 +82,14 @@ binomialVSt <- function(N){
   # abline(0,1)
 }
 sapply(seq(15, 1000, len=10), binomialVSt)
+
+# sample median distribution (normal distribution with SD > 1/sqrt(N))
+getMedian <- function(N){
+  s = rnorm(N)
+  median(s)
+}
+B = 2000; N = 30
+ms = replicate(B, getMedian(N))
+sd(ms)
+qqnorm(ms)
+qqline(ms)
