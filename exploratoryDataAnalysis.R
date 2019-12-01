@@ -62,3 +62,33 @@ plot(time/median(time), ylim=c(1/4, 4))
 abline(h=c(1/2, 1, 2))
 plot(log2(time/median(time)), ylim=c(-1.5, 1.5))
 abline(h=-1:1)
+
+# median, MAD, spearman correlation
+data("ChickWeight")
+plot(ChickWeight$Time, ChickWeight$weight, col = ChickWeight$Diet)
+chick = reshape(ChickWeight, idvar = c("Chick", "Diet"), timevar = "Time", direction = "wide")
+chick = na.omit(chick)
+mean(c(3000, chick$weight.4)) / mean(chick$weight.4)
+median(c(3000, chick$weight.4)) / median(chick$weight.4)
+sd(c(3000, chick$weight.4)) / sd(chick$weight.4)
+mad(c(3000, chick$weight.4)) / mad(chick$weight.4)
+cor(chick$weight.4, chick$weight.21)
+cor(chick$weight.4, chick$weight.21, method='spearman')
+cor(c(3000, chick$weight.4), c(3000, chick$weight.21)) / cor(chick$weight.4, chick$weight.21)
+cor(c(3000, chick$weight.4), c(3000, chick$weight.21), method='spearman') / cor(c(3000, chick$weight.4), c(3000, chick$weight.21), method='spearman')
+
+# Mann-Whitney-Wilcoxon test
+x = chick$weight.4[chick$Diet == 1]
+y = chick$weight.4[chick$Diet == 4]
+t.test(x, y)
+wilcox.test(x, y)
+# wilcox.test is not affected by one outlier added while t.test is
+t.test(c(200, x), y)$p.val
+wilcox.test(c(200, x), y)$p.val
+# wilcox is insensitive to magnitude of difference once two groups are completely separated
+par(mfrow=c(1,3))
+boxplot(x,y)
+boxplot(x, y+10)
+boxplot(x, y+100)
+t.test(x, y+10)$statistic - t.test(x, y+100)$statistic #68
+wilcox.test(x,y+10)$statistic - wilcox.test(x, y+100)$statistic #0
